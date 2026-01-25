@@ -2,9 +2,14 @@ import mongoose from "mongoose";
 // import { upload } from "../middlewares/multer.middleware";
 
 const FileModel = new mongoose.Schema({
-   ownerId: {
+  ownerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "UserModel",
+    required: true,
+  },
+  objectName: {
     type: String,
-    // required: true,
+    required: true,
   },
   fileId: {
     type: String,
@@ -12,8 +17,9 @@ const FileModel = new mongoose.Schema({
   },
   uploadTime: {
     type: Date,
-    required: true,
+    default: Date.now,
   },
+
   originalName: {
     type: String,
     required: true,
@@ -38,15 +44,17 @@ const ShareLink = new mongoose.Schema({
     required: true,
   },
   ownerId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "UserModel",
+    required: true,
   },
   expiresAt: {
-    type:Date,
-    required:true,
+    type: Date,
+    required: true,
   },
   maxDownloads: {
-    type:Number,
-    required:true,
+    type: Number,
+    required: true,
   },
 });
 export const fileModel = mongoose.model("FileModel", FileModel);

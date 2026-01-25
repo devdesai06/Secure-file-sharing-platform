@@ -45,7 +45,7 @@ const DropZone = ({ onFileSelect }) => {
       
       <div className="drop-text">
         <h3>Click to upload or drag and drop</h3>
-        <p>SVG, PNG, JPG or GIF (max. 800x400px)</p>
+        
       </div>
     </div>
   );

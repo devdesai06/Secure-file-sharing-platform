@@ -25,10 +25,11 @@ export const fileUpload = async (req, res) => {
         "Content-Type": file.mimetype,
       },
     );
-    await fileModel.insertOne({
+    await fileModel.create({
       fileId: fileid,
       uploadTime: Date.now(),
-      // ownerId: req.user.id,
+      objectName: objectName,
+      ownerId: req.user._id,
       originalName: req.file.originalname,
       mimetype: req.file.mimetype,
       size: req.file.size,
@@ -84,3 +85,82 @@ export const fileLinkGeneration = async (req, res) => {
     return res.status(500).json({ error: "Error generating sharing link" });
   }
 };
+
+export const downloadFile = async (req, res) => {
+  try {
+    const { fileId } = req.params;
+    const file = await fileModel.findOne({ fileId });
+    if (!file) return res.status(404).json({ error: "File not found" });
+
+    const objectKey = file.objectName;
+
+    const stream = await minioClient.getObject(process.env.MINIO_BUCKET, objectKey);
+    res.setHeader("Content-Disposition", `attachment; filename="${objectKey}"`);
+    stream.pipe(res);
+
+  }
+  catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Error downloading File" });
+  }
+}
+
+export const getMyFiles = async (req, res) => {
+  try {
+    const files = await fileModel.find({ ownerId: req.user._id })
+    if (!files) return res.json("Cannot find your files")
+    return res.json({ files });
+
+  }
+  catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Error getting Files" });
+  }
+}
+
+export const getFileById = async (req, res) => {
+  try {
+    const { fileid } = req.params;
+    const file = await fileModel.findById(fileid);
+    if (!file) return res.status(404).json({ error: "File not found" });
+
+    if (!file.ownerId.equals(req.user._id))
+      return res.status(403).json({ error: "Access denied" });
+
+    return res.json({ file });
+  }
+  catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Error getting File" });
+  }
+}
+
+export const updateFileVisibility = async (req, res) => {
+  try {
+
+  }
+  catch {
+
+  }
+}
+export const deleteFile = async (req, res) => {
+  try {
+    const { fileid } = req.params;
+    const file = await fileModel.findById(fileid);
+    if (!file) return res.status(404).json({ error: "File not found" });
+
+    if (!file.ownerId.equals(req.user._id))
+      return res.status(403).json({ error: "Access denied" });
+
+    await minioClient.removeObject(process.env.MINIO_BUCKET, file.objectName);
+    await fileModel.deleteOne({ _id: fileid });
+    res.json({ message: "File deleted successfully" });
+
+  }
+  catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Error deleting File" });
+  }
+}
+
+
