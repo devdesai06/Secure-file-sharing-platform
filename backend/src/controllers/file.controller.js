@@ -70,9 +70,14 @@ export const fileLinkGeneration = async (req, res) => {
       file.storageRef,
       expiry,
     );
-    await ShareLinkModel.insertMany({
+    
+
+    await ShareLinkModel.create({
       link: url,
-      ownerId: user,
+      ownerId: req.user._id,
+      maxDownloads:4,
+      fileId: file._id,
+      expiresAt: new Date(Date.now() + expiry * 1000),
     });
 
     return res.json({
@@ -135,25 +140,19 @@ export const getFileById = async (req, res) => {
   }
 }
 
-export const updateFileVisibility = async (req, res) => {
-  try {
-
-  }
-  catch {
-
-  }
-}
 export const deleteFile = async (req, res) => {
   try {
-    const { fileid } = req.params;
-    const file = await fileModel.findById(fileid);
+    console.log("REQ.USER =>", req.user);
+
+    const { fileId } = req.params;
+   const file = await fileModel.findOne({ fileId });
     if (!file) return res.status(404).json({ error: "File not found" });
 
     if (!file.ownerId.equals(req.user._id))
       return res.status(403).json({ error: "Access denied" });
 
     await minioClient.removeObject(process.env.MINIO_BUCKET, file.objectName);
-    await fileModel.deleteOne({ _id: fileid });
+    await fileModel.deleteOne({fileId });
     res.json({ message: "File deleted successfully" });
 
   }
@@ -164,3 +163,12 @@ export const deleteFile = async (req, res) => {
 }
 
 
+
+export const updateFileVisibility = async (req, res) => {
+  try {
+
+  }
+  catch {
+
+  }
+}
