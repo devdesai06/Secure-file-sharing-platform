@@ -1,0 +1,179 @@
+.files-page {
+  background: #0b0b0f;
+  min-height: 100vh;
+  color: #e4e4e7;
+}
+
+.files-container {
+  max-width: 1100px;
+  margin: 0px auto;
+  padding: 20px 20px;
+}
+
+/* Header */
+.files-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.files-header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.files-header p {
+  margin-top: 4px;
+  font-size: 14px;
+  color: #a1a1aa;
+}
+
+.upload-new-btn {
+  padding: 10px 18px;
+  border-radius: 10px;
+  background: #6366f1;
+  border: none;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.upload-new-btn:hover {
+  background: #4f46e5;
+}
+
+/* Table Card */
+.files-card {
+  background: rgba(20, 20, 25, 0.9);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Table Header */
+.files-table-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr;
+  font-size: 13px;
+  color: #71717a;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Rows */
+.files-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.files-row:last-child {
+  border-bottom: none;
+}
+
+/* File Name */
+.file-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.file-icon {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* Status */
+.status {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  width: fit-content;
+}
+
+.status-active {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+}
+
+.status-expired {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+/* Actions */
+.file-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #e4e4e7;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: 0.2s ease;
+}
+
+.action-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.action-danger {
+  background: rgba(239, 68, 68, 0.15);
+  border: none;
+  color: #ef4444;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.top-bar {
+  margin-bottom: 20px;
+}
+
+.back-btn {
+  background: transparent;
+  border: none;
+  color: #a1a1aa;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 6px 0;
+  transition: 0.2s ease;
+}
+
+.back-btn:hover {
+  color: #ffffff;
+}
+.empty-state {
+  padding: 40px;
+  text-align: center;
+  color: #71717a;
+}
+
+
+/* Prevent long names from breaking layout */
+.file-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0; /* important for truncation inside grid */
+}
+
+.file-name-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 240px;  /* adjust based on layout */
+}

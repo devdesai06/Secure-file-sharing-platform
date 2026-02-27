@@ -1,127 +1,51 @@
-.main-wrapper {
-  width: 100%;
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Main App Container */
+.app-container {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  perspective: 1000px; /* For 3D feel on entry */
+  font-family: "Poppins", sans-serif;
 }
 
-.saas-card {
-  width: 100%;
-  max-width: 520px;
-  background: var(--bg-card);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
-  overflow: hidden;
-  border: 1px solid white; /* Inner border highlight */
-  
-  /* Entry Animation */
-  animation: cardEntry 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-@keyframes cardEntry {
-  from { opacity: 0; transform: translateY(30px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-/* Header */
-.card-header {
-  padding: 3rem 2.5rem 2rem;
-  text-align: center;
-}
-
-.brand-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
-  background: rgba(59, 130, 246, 0.1);
-  color: var(--primary);
-  border-radius: 100px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-}
-
-.card-header h1 {
-  font-size: 2.2rem;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  color: var(--text-main);
-  margin-bottom: 0.75rem;
-}
-
-.card-header p {
-  color: var(--text-secondary);
-  font-size: 1.1rem;
-  line-height: 1.5;
-}
-
-/* Body */
-.card-body {
-  padding: 0 2.5rem 2.5rem;
-}
-
-/* Footer & The Glow Button */
-.card-footer {
-  background: var(--bg-subtle);
-  padding: 1.5rem 2.5rem;
-  border-top: 1px solid var(--border);
-}
-
-.btn-primary {
-  position: relative;
-  width: 100%;
-  padding: 1rem;
-  background: var(--primary);
-  color: white;
-  font-size: 1.05rem;
-  font-weight: 600;
-  border: none;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  
-  /* Flex for icon alignment */
+/* ===== Navbar ===== */
+.navbar {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  
-  /* The Glow Transition */
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 
-    0 1px 2px rgba(0,0,0,0.1), 
-    inset 0 1px 0 rgba(255,255,255,0.2); /* Top inner highlight */
+
+  padding: 18px 40px;
+  background: #1e293b;
+  color: white;
 }
 
-/* Hover State: Lift & Glow */
-.btn-primary:hover:not(:disabled) {
-  background: var(--primary-dark);
-  transform: translateY(-2px);
-  box-shadow: 
-    0 8px 20px -4px var(--primary-glow),
-    inset 0 1px 0 rgba(255,255,255,0.2);
+.logo {
+  font-size: 1.3rem;
+  font-weight: 600;
 }
 
-/* Active Click State */
-.btn-primary:active:not(:disabled) {
-  transform: translateY(0);
+.nav-links {
+  display: flex;
+  gap: 25px;
 }
 
-/* Disabled State */
-.btn-primary:disabled {
-  background: #cbd5e1;
-  color: #94a3b8;
-  cursor: not-allowed;
-  box-shadow: none;
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  transition: 0.3s ease;
 }
 
-/* Footer Note */
-.footer-note {
-  margin-top: 2rem;
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  opacity: 0.8;
-  transition: opacity 0.2s;
+.nav-links a:hover {
+  color: #60a5fa;
 }
-.footer-note:hover { opacity: 1; }
+
+/* ===== Page Content ===== */
+.page-content {
+  flex: 1;
+}

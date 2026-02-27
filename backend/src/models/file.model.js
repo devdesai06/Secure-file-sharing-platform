@@ -36,6 +36,14 @@ const FileModel = new mongoose.Schema({
     type: String,
     required: true,
   },
+  maxDownloads: {
+    type: Number,
+    default:-1
+  },
+  downloadCount: {
+    type: Number,
+    default: 0,
+  }
 });
 
 const ShareLink = new mongoose.Schema({

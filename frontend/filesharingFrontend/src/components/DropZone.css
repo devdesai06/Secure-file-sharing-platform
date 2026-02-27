@@ -1,62 +1,248 @@
-.drop-zone {
-  position: relative;
-  border: 2px dashed var(--border);
-  background: var(--bg-subtle);
-  border-radius: var(--radius-md);
-  padding: 3.5rem 2rem;
+/* Reuse the Inter font for a professional SaaS feel */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+/* ===== Container ===== */
+.dropzone-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  min-height: 100vh;
+  
+  /* Matches the Auth theme: Deep space gradient */
+  background: radial-gradient(circle at bottom left, #1e1b4b, #09090b 50%);
+  font-family: 'Inter', sans-serif;
+  color: #f4f4f5;
+  padding: 20px;
+}
+
+/* ===== Drop Area (The Landing Pad) ===== */
+.dropzone {
+  width: 100%;
+  max-width: 500px;
+  height: 260px;
+
+  /* Glassmorphism base */
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  
+  /* Soft dashed border */
+  border: 2px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 24px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
+  padding: 40px;
+
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
   overflow: hidden;
 }
 
-/* Hover & Drag State */
-.drop-zone:hover, .drop-zone.active {
-  border-color: var(--primary);
-  background: #eff6ff; /* Light blue tint */
-  transform: translateY(-2px); /* Subtle lift */
+/* Subtle glow effect in the background of the dropzone */
+.dropzone::before {
+  content: '';
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  background: #6366f1;
+  filter: blur(80px);
+  opacity: 0.1;
+  transition: opacity 0.3s ease;
 }
 
-/* The Icon Badge */
-.icon-badge {
-  width: 64px;
-  height: 64px;
-  background: white;
-  border-radius: 20px; /* Squircle */
+/* ===== Drag Active State ===== */
+.dropzone.dragging {
+  background: rgba(99, 102, 241, 0.05);
+  border-color: #6366f1;
+  transform: scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 
+              0 0 20px rgba(99, 102, 241, 0.2);
+}
+
+.dropzone.dragging::before {
+  opacity: 0.3;
+}
+
+/* ===== Hover State ===== */
+.dropzone:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* ===== Typography inside Dropzone ===== */
+.dropzone-prompt {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #f4f4f5;
+  margin-bottom: 8px;
+}
+
+.dropzone-subtext {
+  font-size: 0.85rem;
+  color: #a1a1aa;
+}
+
+/* ===== File Preview ===== */
+.file-preview {
+  margin-top: 10px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: #a855f7; /* Phlox Purple accent */
+  background: rgba(168, 85, 247, 0.1);
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(168, 85, 247, 0.2);
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin: 0 auto 1.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  color: var(--text-secondary);
+  gap: 8px;
 }
 
-.drop-zone:hover .icon-badge {
-  transform: scale(1.1) rotate(-5deg); /* Playful bounce */
-  color: var(--primary);
-  box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.2);
-}
+/* ===== Upload Button (The Action) ===== */
+.upload-btn {
+  padding: 14px 32px;
+  border: none;
+  border-radius: 14px;
 
-/* Typography */
-.drop-text h3 {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: var(--text-main);
+  letter-spacing: -0.01em;
+
+  cursor: pointer;
+  color: white;
+  
+  /* Gradient matching the Auth button */
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+  
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-.drop-text p {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
+.upload-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+  filter: brightness(1.1);
 }
 
-/* Uploading Pulse Animation (Optional if you add loading state here) */
-@keyframes pulse-border {
-  0% { border-color: var(--primary); }
-  50% { border-color: rgba(59, 130, 246, 0.3); }
-  100% { border-color: var(--primary); }
+.upload-btn:active {
+  transform: translateY(0);
 }
-.drop-zone.active {
-  animation: pulse-border 2s infinite;
+
+/* Hidden input for standard file picking */
+#file-input {
+  display: none;
+}
+
+/* Container Card */
+.result-card {
+  margin-top: 30px;
+  padding: 24px;
+  border-radius: 16px;
+  background: linear-gradient(
+    145deg,
+    rgba(20, 20, 25, 0.95),
+    rgba(30, 30, 35, 0.9)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* Header */
+.result-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 8px #22c55e;
+}
+
+.result-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.result-header p {
+  margin: 2px 0 0 0;
+  font-size: 13px;
+  color: #a1a1aa;
+}
+
+/* Body */
+.result-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.result-input {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #111115;
+  color: #e4e4e7;
+  font-size: 13px;
+  font-family: monospace;
+  outline: none;
+}
+
+/* Buttons */
+.result-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-primary {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: none;
+  background: #6366f1;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: #4f46e5;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: transparent;
+  color: #e4e4e7;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Footer */
+.result-footer {
+  margin-top: 16px;
+  font-size: 12px;
+  color: #71717a;
 }

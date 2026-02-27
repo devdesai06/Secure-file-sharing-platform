@@ -2,173 +2,198 @@ import { minioClient } from "../config/minio.config.js";
 import path from "path";
 import crypto from "crypto";
 import { fileModel, ShareLinkModel } from "../models/file.model.js";
+import { successResponse, errorResponse } from "../utils/response.js";
 
-//share/file-upload
+// ================= FILE UPLOAD =================
 export const fileUpload = async (req, res) => {
   try {
     const file = req.file;
     if (!file) {
-      return res.status(400).json({ error: "No file uploaded" });
+      return errorResponse(res, "No file uploaded", 400);
     }
+
     const ext = path.extname(file.originalname);
     const objectName = crypto.randomUUID() + ext;
     const fileid = crypto.randomUUID();
-    const storageRef = objectName;
 
-    //fPutObject expects a file on disk hence using putobject with buffer
     await minioClient.putObject(
       process.env.MINIO_BUCKET,
       objectName,
       file.buffer,
       file.size,
-      {
-        "Content-Type": file.mimetype,
-      },
+      { "Content-Type": file.mimetype }
     );
+
     await fileModel.create({
       fileId: fileid,
       uploadTime: Date.now(),
-      objectName: objectName,
+      objectName,
       ownerId: req.user._id,
-      originalName: req.file.originalname,
-      mimetype: req.file.mimetype,
-      size: req.file.size,
-      storageRef: storageRef,
+      originalName: file.originalname,
+      mimetype: file.mimetype,
+      size: file.size,
+      storageRef: objectName,
     });
 
-    return res.status(201).json({
-      message: "File uploaded",
-      fileId: fileid,
-      objectKey: objectName,
-    });
+    return successResponse(
+      res,
+      "File uploaded successfully",
+      { fileId: fileid, objectKey: objectName },
+      200
+    );
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: "Error uploading file" });
+    return errorResponse(res, "Error uploading file");
   }
 };
 
-//share/:fileId/file
+// ================= GENERATE SHARE LINK =================
 export const fileLinkGeneration = async (req, res) => {
   try {
     const { fileId } = req.params;
-    const { expiryTime } = req.body;
+   const expiryTime = parseInt(req.query.expiryTime) || 300;
+
     const expiry = Number(expiryTime);
     if (!expiry || expiry < 10 || expiry > 3600) {
-      return res.status(400).json({ error: "Invalid expiry time" });
+      return errorResponse(res, "Invalid expiry time", 400);
     }
 
     if (!fileId) {
-      return res.status(400).json({ error: "fileId is required" });
+      return errorResponse(res, "fileId is required", 400);
     }
 
-    const file = await fileModel.findOne({ fileId: fileId });
+    const file = await fileModel.findOne({ fileId });
     if (!file) {
-      return res.status(404).json({ error: "File not found" });
+      return errorResponse(res, "File not found", 404);
     }
+
     const url = await minioClient.presignedGetObject(
       process.env.MINIO_BUCKET,
       file.storageRef,
-      expiry,
+      expiry
     );
-    
 
     await ShareLinkModel.create({
       link: url,
       ownerId: req.user._id,
-      maxDownloads:4,
+      maxDownloads: 4,
       fileId: file._id,
       expiresAt: new Date(Date.now() + expiry * 1000),
     });
 
-    return res.json({
+    return successResponse(res, "Sharing link generated", {
       downloadUrl: url,
       expires: expiry,
       filename: file.originalName,
     });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: "Error generating sharing link" });
+    return errorResponse(res, "Error generating sharing link");
   }
 };
 
+// ================= DOWNLOAD FILE =================
 export const downloadFile = async (req, res) => {
   try {
     const { fileId } = req.params;
     const file = await fileModel.findOne({ fileId });
-    if (!file) return res.status(404).json({ error: "File not found" });
 
-    const objectKey = file.objectName;
+    if (!file) {
+      return errorResponse(res, "File not found", 404);
+    }
 
-    const stream = await minioClient.getObject(process.env.MINIO_BUCKET, objectKey);
-    res.setHeader("Content-Disposition", `attachment; filename="${objectKey}"`);
+    const stream = await minioClient.getObject(
+      process.env.MINIO_BUCKET,
+      file.objectName
+    );
+
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${file.originalName}"`
+    );
+
     stream.pipe(res);
-
-  }
-  catch (err) {
+  } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: "Error downloading File" });
+    return errorResponse(res, "Error downloading file");
   }
-}
+};
 
+// ================= GET MY FILES =================
 export const getMyFiles = async (req, res) => {
   try {
-    const files = await fileModel.find({ ownerId: req.user._id })
-    if (!files) return res.json("Cannot find your files")
-    return res.json({ files });
+    const files = await fileModel.find({ ownerId: req.user._id });
 
-  }
-  catch (err) {
+    return successResponse(res, "Files fetched successfully", { files });
+  } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: "Error getting Files" });
+    return errorResponse(res, "Error getting files");
   }
-}
+};
 
+// ================= GET FILE BY ID =================
 export const getFileById = async (req, res) => {
   try {
-    const { fileid } = req.params;
-    const file = await fileModel.findById(fileid);
-    if (!file) return res.status(404).json({ error: "File not found" });
+    const { fileId } = req.params;
+    const file = await fileModel.findOne({fileId});
 
-    if (!file.ownerId.equals(req.user._id))
-      return res.status(403).json({ error: "Access denied" });
+    if (!file) {
+      return errorResponse(res, "File not found", 404);
+    }
 
-    return res.json({ file });
-  }
-  catch (err) {
+    if (!file.ownerId.equals(req.user._id)) {
+      return errorResponse(res, "Access denied", 403);
+    }
+
+    return successResponse(res, "File fetched successfully", { file });
+  } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: "Error getting File" });
+    return errorResponse(res, "Error getting file");
   }
-}
+};
 
+// ================= DELETE FILE =================
 export const deleteFile = async (req, res) => {
   try {
-    console.log("REQ.USER =>", req.user);
-
     const { fileId } = req.params;
-   const file = await fileModel.findOne({ fileId });
-    if (!file) return res.status(404).json({ error: "File not found" });
+    const file = await fileModel.findOne({ fileId });
 
-    if (!file.ownerId.equals(req.user._id))
-      return res.status(403).json({ error: "Access denied" });
+    if (!file) {
+      return errorResponse(res, "File not found", 404);
+    }
 
-    await minioClient.removeObject(process.env.MINIO_BUCKET, file.objectName);
-    await fileModel.deleteOne({fileId });
-    res.json({ message: "File deleted successfully" });
+    if (!file.ownerId.equals(req.user._id)) {
+      return errorResponse(res, "Access denied", 403);
+    }
 
-  }
-  catch (err) {
+    await minioClient.removeObject(
+      process.env.MINIO_BUCKET,
+      file.objectName
+    );
+
+    await fileModel.deleteOne({ fileId });
+
+    return successResponse(res, "File deleted successfully");
+  } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: "Error deleting File" });
+    return errorResponse(res, "Error deleting file");
   }
-}
-
-
+};
 
 export const updateFileVisibility = async (req, res) => {
   try {
+    
+  }
+  catch (err){
 
   }
-  catch {
+}
+
+export const maxDownloads=async(req,res)=>{
+  try{
+
+  }
+  catch(err){
 
   }
 }
