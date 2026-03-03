@@ -12,7 +12,7 @@ export const DropZone = () => {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
   const baseUrl = import.meta.env.VITE_BASE_URL;
-
+  const [expiryTime, setExpiryTime] = useState(300); // default 5 min
   const handleDragOver = (e) => {
     e.preventDefault();
     setIsDragging(true);
@@ -77,7 +77,7 @@ export const DropZone = () => {
 
     try {
       const response = await axios.get(`${baseUrl}/share/${fileId}/file`, {
-        params: { expiryTime: 500 },
+        params: { expiryTime: expiryTime },
         withCredentials: true,
       });
 
@@ -116,49 +116,62 @@ export const DropZone = () => {
       </div>
 
       {file && !isUploaded && (
-        <button className="upload-btn" onClick={handleUpload}>
-          Upload File
-        </button>
+        <>
+          <div className="expiry-pills">
+            {[300, 3600, 86400, 604800].map((value) => (
+              <button
+                key={value}
+                className={`expiry-pill ${
+                  expiryTime === value ? "active-pill" : ""
+                }`}
+                onClick={() => setExpiryTime(value)}
+              >
+                {value === 300 && "5m"}
+                {value === 3600 && "1h"}
+                {value === 86400 && "24h"}
+                {value === 604800 && "7d"}
+              </button>
+            ))}
+          </div>
+          <button className="upload-btn" onClick={handleUpload}>
+            Upload File
+          </button>
+        </>
       )}
-     {isUploaded && link && (
-  <div className="result-card">
-    <div className="result-header">
-      <div className="status-dot" />
-      <div>
-        <h3>File Ready</h3>
-        <p>Your secure share link has been generated.</p>
-      </div>
-    </div>
+      {isUploaded && link && (
+        <div className="result-card">
+          <div className="result-header">
+            <div className="status-dot" />
+            <div>
+              <h3>File Ready</h3>
+              <p>Your secure share link has been generated.</p>
+            </div>
+          </div>
 
-    <div className="result-body">
-      <input
-        type="text"
-        value={link}
-        readOnly
-        className="result-input"
-      />
+          <div className="result-body">
+            <input type="text" value={link} readOnly className="result-input" />
 
-      <div className="result-actions">
-        <button
-          className="btn-secondary"
-          onClick={() => {
-            navigator.clipboard.writeText(link);
-            toast.success("Link copied");
-          }}
-        >
-          Copy Link
-        </button>
+            <div className="result-actions">
+              <button
+                className="btn-secondary"
+                onClick={() => {
+                  navigator.clipboard.writeText(link);
+                  toast.success("Link copied");
+                }}
+              >
+                Copy Link
+              </button>
 
-        <button
-          className="btn-primary"
-          onClick={() => window.open(link, "_blank")}
-        >
-          Open
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+              <button
+                className="btn-primary"
+                onClick={() => window.open(link, "_blank")}
+              >
+                Open
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

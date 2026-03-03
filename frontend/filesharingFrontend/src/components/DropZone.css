@@ -1,5 +1,5 @@
 /* Reuse the Inter font for a professional SaaS feel */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap");
 
 /* ===== Container ===== */
 .dropzone-container {
@@ -9,10 +9,10 @@
   justify-content: center;
   gap: 30px;
   min-height: 100vh;
-  
+
   /* Matches the Auth theme: Deep space gradient */
   background: radial-gradient(circle at bottom left, #1e1b4b, #09090b 50%);
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   color: #f4f4f5;
   padding: 20px;
 }
@@ -27,7 +27,7 @@
   background: rgba(255, 255, 255, 0.02);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  
+
   /* Soft dashed border */
   border: 2px dashed rgba(255, 255, 255, 0.15);
   border-radius: 24px;
@@ -47,7 +47,7 @@
 
 /* Subtle glow effect in the background of the dropzone */
 .dropzone::before {
-  content: '';
+  content: "";
   position: absolute;
   width: 120px;
   height: 120px;
@@ -62,8 +62,9 @@
   background: rgba(99, 102, 241, 0.05);
   border-color: #6366f1;
   transform: scale(1.02);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 
-              0 0 20px rgba(99, 102, 241, 0.2);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(99, 102, 241, 0.2);
 }
 
 .dropzone.dragging::before {
@@ -116,11 +117,11 @@
 
   cursor: pointer;
   color: white;
-  
+
   /* Gradient matching the Auth button */
   background: linear-gradient(135deg, #6366f1, #a855f7);
   box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
-  
+
   transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
@@ -245,4 +246,28 @@
   margin-top: 16px;
   font-size: 12px;
   color: #71717a;
+}
+.expiry-pills {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.expiry-pill {
+  padding: 8px 14px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  color: #e4e4e7;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.expiry-pill:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.active-pill {
+  background: #6366f1;
+  color: white;
 }

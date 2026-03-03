@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 const MyFiles = () => {
   const navigate = useNavigate();
   const baseUrl = import.meta.env.VITE_BASE_URL;
+  
   const [files, setfiles] = useState([]);
 
   const handleView = async (fileId) => {
@@ -90,6 +91,7 @@ const MyFiles = () => {
             <span>Size</span>
             <span>Uploaded</span>
             <span>Type</span>
+            <span>Download Count</span>
             <span>Actions</span>
           </div>
           {files.length === 0 ? (
@@ -123,6 +125,7 @@ const MyFiles = () => {
                   <span>{formattedSize}</span>
                   <span>{formattedDate}</span>
                   <span className="file-type">{fileType}</span>
+                  <span className="file-type">{file.downloadCount}</span>
 
                   <div className="file-actions">
                     <button

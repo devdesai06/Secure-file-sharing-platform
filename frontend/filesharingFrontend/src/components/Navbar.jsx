@@ -70,13 +70,7 @@ function Navbar() {
               </a>
             </li>
           )}
-          {isLoggedIn && (
-            <li>
-              <a href="#about" className="nav-link">
-                Account
-              </a>
-            </li>
-          )}
+          
         </ul>
 
         <div className="nav-actions">

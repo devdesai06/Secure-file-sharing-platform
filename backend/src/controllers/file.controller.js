@@ -51,7 +51,7 @@ export const fileUpload = async (req, res) => {
 export const fileLinkGeneration = async (req, res) => {
   try {
     const { fileId } = req.params;
-   const expiryTime = parseInt(req.query.expiryTime) || 300;
+    const expiryTime = parseInt(req.query.expiryTime) || 300;
 
     const expiry = Number(expiryTime);
     if (!expiry || expiry < 10 || expiry > 3600) {
@@ -77,6 +77,7 @@ export const fileLinkGeneration = async (req, res) => {
       link: url,
       ownerId: req.user._id,
       maxDownloads: 4,
+      downloadCount:downloadCount,
       fileId: file._id,
       expiresAt: new Date(Date.now() + expiry * 1000),
     });
@@ -135,7 +136,7 @@ export const getMyFiles = async (req, res) => {
 export const getFileById = async (req, res) => {
   try {
     const { fileId } = req.params;
-    const file = await fileModel.findOne({fileId});
+    const file = await fileModel.findOne({ fileId });
 
     if (!file) {
       return errorResponse(res, "File not found", 404);
@@ -182,18 +183,18 @@ export const deleteFile = async (req, res) => {
 
 export const updateFileVisibility = async (req, res) => {
   try {
-    
+
   }
-  catch (err){
+  catch (err) {
 
   }
 }
 
-export const maxDownloads=async(req,res)=>{
-  try{
+export const maxDownloads = async (req, res) => {
+  try {
 
   }
-  catch(err){
+  catch (err) {
 
   }
 }
